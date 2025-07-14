@@ -162,6 +162,7 @@
     zsh
     oh-my-zsh
     zsh-powerlevel10k
+    bitwarden-desktop
   ];
 
   # Some programs need SUID wrappers, can be configured further or are

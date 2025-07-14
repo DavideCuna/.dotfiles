@@ -28,7 +28,7 @@ in {
     kitty = {
       enable = true;
       extraConfig = ''
-        background_opacity 0.85
+        background_opacity 0.37
         background_blur 1
         font_family IosevkaTerm Nerd Font 
         font_size 12
