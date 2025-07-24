@@ -79,6 +79,7 @@
   services.fprintd.enable = true;
 
   security.pam.services = {
+    sddm.enableKwallet = true;
     sudo.fprintAuth = true;
     login.fprintAuth = true;
     sddm.fprintAuth = true;
@@ -128,6 +129,7 @@
 
   # Install firefox.
   programs.firefox.enable = true;
+  programs.kdeconnect.enable = true;
 
   xdg.portal.enable = true;
   xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
