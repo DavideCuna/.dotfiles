@@ -129,7 +129,6 @@
 
   # Install firefox.
   programs.firefox.enable = true;
-  programs.kdeconnect.enable = true;
 
   xdg.portal.enable = true;
   xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
@@ -166,6 +165,7 @@
     zsh-powerlevel10k
     bitwarden-cli
     bitwarden-desktop
+    libsForQt5.kdeconnect-kde
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
