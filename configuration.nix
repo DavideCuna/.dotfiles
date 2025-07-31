@@ -154,6 +154,7 @@
     fd
     nodejs
     python3
+    jdk24
     gcc
     zip
     unzip
