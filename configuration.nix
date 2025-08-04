@@ -58,7 +58,7 @@
   # You can disable this if you're only using the Wayland session.
   # Enable the KDE Plasma Desktop Environment.
   services = {
-    displayManager.sddm.enable = true;
+    displayManager.ly.enable = true;
     desktopManager.plasma6.enable = true;
     xserver = {
       enable = true;
@@ -166,7 +166,8 @@
     zsh-powerlevel10k
     bitwarden-cli
     bitwarden-desktop
-    libsForQt5.kdeconnect-kde
+    hyprland
+    ly
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
