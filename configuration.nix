@@ -168,6 +168,8 @@
     bitwarden-desktop
     hyprland
     ly
+    waybar
+    rofi-wayland
   ];
 
   # Some programs need SUID wrappers, can be configured further or are

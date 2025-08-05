@@ -26,7 +26,14 @@
     homeConfigurations = {
       davide = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
-        modules = [ ./home.nix ];
+        modules = [ 
+          ./home.nix
+          ./hyprland.nix
+          ./waybar.nix
+          ./rofi.nix
+          ./sh.nix
+
+        ];
       };
     };
   };
