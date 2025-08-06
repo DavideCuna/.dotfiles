@@ -177,6 +177,7 @@
     greetd.tuigreet
     waybar
     rofi-wayland
+    wl-clipboard-rs
   ];
 
   # Some programs need SUID wrappers, can be configured further or are

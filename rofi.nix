@@ -2,7 +2,8 @@
 {
   programs.rofi = {
     enable = true;
-    theme = "gruvbox-dark-hard";
+    terminal = "${pkgs.kitty}/bin/kitty";
+
   };
 
   environment.systemPackages = with pkgs; [rofi-wayland];
