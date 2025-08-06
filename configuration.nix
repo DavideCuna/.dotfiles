@@ -58,7 +58,14 @@
   # You can disable this if you're only using the Wayland session.
   # Enable the KDE Plasma Desktop Environment.
   services = {
-    displayManager.ly.enable = true;
+    greetd = {
+      enable = true;
+      settings.default_session = {
+        command = "${pkgs.greetd.tuigreet}/bin/tuigreet";
+        user = "greeter";
+      };
+    };
+    # displayManager.ly.enable = true;
     desktopManager.plasma6.enable = true;
     xserver = {
       enable = true;
@@ -167,7 +174,7 @@
     bitwarden-cli
     bitwarden-desktop
     hyprland
-    ly
+    greetd.tuigreet
     waybar
     rofi-wayland
   ];
