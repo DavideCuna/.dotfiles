@@ -178,6 +178,7 @@
     waybar
     rofi-wayland
     wl-clipboard-rs
+    hyprpaper
   ];
 
   # Some programs need SUID wrappers, can be configured further or are

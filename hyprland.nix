@@ -7,7 +7,7 @@
 
   environment.systemPackages = with pkgs; [
     hyprland
-    hyprpaper
+    # hyprpaper
     hyprlock
   ];
 
