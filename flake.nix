@@ -20,19 +20,14 @@
     nixosConfigurations = {
       nixos = lib.nixosSystem {
         inherit system;
-        modules = [ ./configuration.nix ];
-      };
-    };
-    homeConfigurations = {
-      davide = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
         modules = [ 
-          ./home.nix
-          ./hyprland.nix
-          ./waybar.nix
-          ./rofi.nix
-          ./sh.nix
-
+          ./configuration.nix 
+          home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.davide = import ./home.nix;
+            }
         ];
       };
     };

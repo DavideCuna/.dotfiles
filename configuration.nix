@@ -136,6 +136,9 @@
 
   # Install firefox.
   programs.firefox.enable = true;
+  programs.hyprland.enable = true;
+  programs.waybar.enable = true;
+  # programs.rofi.enable = true;
 
   xdg.portal.enable = true;
   xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
@@ -174,11 +177,14 @@
     bitwarden-cli
     bitwarden-desktop
     hyprland
+    hyprpaper
+    hyprlock
     greetd.tuigreet
     waybar
     rofi-wayland
     wl-clipboard-rs
     hyprpaper
+    waybar
   ];
 
   # Some programs need SUID wrappers, can be configured further or are

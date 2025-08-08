@@ -1,11 +1,9 @@
 { config, pkgs, ... }:
 {
-  programs.rofi = {
-    enable = true;
-    terminal = "${pkgs.kitty}/bin/kitty";
+  # programs.rofi = {
+    # enable = true;
+    # terminal = "${pkgs.kitty}/bin/kitty";
 
-  };
-
-  environment.systemPackages = with pkgs; [rofi-wayland];
+  # };
 
 }
