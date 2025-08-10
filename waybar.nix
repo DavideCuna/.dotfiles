@@ -16,8 +16,9 @@
       "custom/pomodoro" = {
         format = "{}";
         return-type = "json";
-        exec = "${config.home.homeDirectory}/.local/bin/pomodoro.sh";
-        on-click = "${config.home.homeDirectory}/.local/bin/pomodoro.sh start";
+        exec = "/home/davide/.local/bin/pomodoro.sh";
+        on-click = "/home/davide/.local/bin/pomodoro.sh start";
+        on-click-right = "/home/davide/.local/bin/pomodoro.sh reset";
         interval = 1;
       };
 
@@ -69,6 +70,27 @@
           border-radius: 0;
           color: @accent;
           font-weight: bold;
+        }
+
+        #custom-pomodoro {
+          color: @accent;
+          background: @bg;
+          border-radius: 6px;
+          padding: 0 10px;
+          margin: 0 4px;
+          font-weight: bold;
+        }
+
+        #custom-pomodoro.done {
+          background: @bg-alt;
+          color: @accent;
+          animation: blink 1s steps(2, start) infinite;
+        }
+
+        @keyframes blink {
+          to {
+            visibility: hidden;
+          }
         }
 
     '';
