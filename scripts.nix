@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   home.activation.createLocalBin = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
