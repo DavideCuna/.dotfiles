@@ -89,7 +89,7 @@
 
         @keyframes blink {
           to {
-            visibility: hidden;
+            color: transparent;
           }
         }
 
