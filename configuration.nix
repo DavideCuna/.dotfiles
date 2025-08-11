@@ -167,7 +167,8 @@
     ripgrep
     fd
     nodejs
-    python3
+    # python3
+    # python312Packages.pip
     jdk24
     gcc
     zip
