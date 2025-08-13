@@ -1,15 +1,18 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 {
   programs.waybar = {
     enable = true;
+    systemd.enable = true;
     settings = {
       mainBar = {
         layer = "top";
         position = "top";
+        separator = "  |  ";
         margin-bottom = -10;
         spacing = 0;
-        modules-left = [ "hyprland/workspaces" "tray" ];
-        modules-center = [ "clock" "custom/pomodoro" ];
+        modules-left = [ "hyprland/workspaces" "hyprland/window"];
+        # modules-center = [ "clock" "custom/pomodoro" ];
+        modules-center = [ "clock" ];
         modules-right = ["cpu" "memory" "network" "battery" ];
       };
 
@@ -32,7 +35,7 @@
       @define-color bg-alt #1D2526;
 
     * {
-        font-size: 11px;
+        font-size: 13px;
         min-height: 0;
       }
 

@@ -66,7 +66,7 @@
       };
     };
     # displayManager.ly.enable = true;
-    desktopManager.plasma6.enable = true;
+    # desktopManager.plasma6.enable = true;
     xserver = {
       enable = true;
       windowManager.i3 = {
@@ -138,7 +138,6 @@
   # Install firefox.
   programs.firefox.enable = true;
   programs.waybar.enable = true;
-  # programs.rofi.enable = true;
   programs.hyprland = {
     enable = true;
     withUWSM = true;
@@ -154,6 +153,7 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     neovim
+    libreoffice-qt6
     git
     tmux
     fprintd
@@ -174,6 +174,8 @@
     zip
     unzip
     fzf
+    lua5_1
+    lua51Packages.luarocks
     stylua
     wget
     zsh
@@ -184,12 +186,15 @@
     hyprland
     hyprpaper
     hyprlock
+    hyprcursor
     greetd.tuigreet
     waybar
     rofi-wayland
     wl-clipboard-rs
-    hyprpaper
     waybar
+    phinger-cursors
+    calcure
+    zeitgeist
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
