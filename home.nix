@@ -77,7 +77,19 @@
   #  /etc/profiles/per-user/davide/etc/profile.d/hm-session-vars.sh
   #
   home.sessionVariables = {
-    # EDITOR = "emacs";
+    EDITOR = "nvim";
+  };
+
+  programs.yazi = {
+    enable = true;
+    settings = {
+      flavor = "ashen";
+      opener = {
+        edit = [
+          { run = "nvim \"$@\""; block = true; desc = "Edit with Neovim"; }
+        ];
+      };
+    };
   };
 
   # Let Home Manager install and manage itself.

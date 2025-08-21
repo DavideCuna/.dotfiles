@@ -5,6 +5,7 @@ let
     ll = "ls -l";
     ".." = "cd ..";
     cp = "cp -i";
+    ycd = "cd \"$(yazi --print-cwd)\"";
   };
 in {
   programs = { 

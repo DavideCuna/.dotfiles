@@ -143,6 +143,7 @@
     withUWSM = true;
   };
 
+
   xdg.portal.enable = true;
   xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
 
@@ -167,8 +168,6 @@
     ripgrep
     fd
     nodejs
-    # python3
-    # python312Packages.pip
     jdk24
     gcc
     zip
@@ -194,7 +193,7 @@
     waybar
     phinger-cursors
     calcure
-    zeitgeist
+    brightnessctl
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
