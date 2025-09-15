@@ -154,6 +154,7 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     neovim
+    gnumake
     libreoffice-qt6
     git
     tmux
@@ -194,6 +195,7 @@
     phinger-cursors
     calcure
     brightnessctl
+    jetbrains.idea-community
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
