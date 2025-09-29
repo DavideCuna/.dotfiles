@@ -191,11 +191,13 @@
     waybar
     rofi-wayland
     wl-clipboard-rs
-    waybar
     phinger-cursors
     calcure
     brightnessctl
     jetbrains.idea-community
+    krabby
+    android-studio
+    flutter
   ];
 
   # Some programs need SUID wrappers, can be configured further or are

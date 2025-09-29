@@ -4,16 +4,17 @@
     "$mod" = "SUPER";
     bind = [
       "$mod, F, exec, firefox"
-      
+      "$mod, R, exec, rofi -show drun"
     ]
       ++ (
-        builtins.concatList (builtins.genList (i:
-          let ws = i + 1;
+        builtins.concatLists (builtins.genList (i:
+          let
+            ws = toString (i + 1);
           in [
-            "$mod, code:1${toString i}, workspace, ${toString ws}"
-            "$mod SHIFT, code:1${toString i}, movetoworkspace, &{toString ws}"
-          ]
-        ) 9)
+            "$mod, code:1${ws}, workspace, ${ws}"
+            "$mod SHIFT, code:1${ws}, movetoworkspace, ${ws}"
+             ]
+          ) 9)
       );
-  };
+    };
 }

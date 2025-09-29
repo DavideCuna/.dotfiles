@@ -12,7 +12,7 @@
   };
 
   outputs = { self, nixpkgs, home-manager, hyprland, ...}:
-  let 
+  let
     system = "x86_64-linux";
     lib = nixpkgs.lib;
     pkgs = nixpkgs.legacyPackages.${system};
@@ -20,9 +20,9 @@
     nixosConfigurations = {
       nixos = lib.nixosSystem {
         inherit system;
-        modules = [ 
-          ./configuration.nix 
-          home-manager.nixosModules.home-manager
+        modules = [
+          ./configuration.nix
+	  home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
