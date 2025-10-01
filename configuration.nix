@@ -154,6 +154,8 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     neovim
+    fd
+    ripgrep
     gnumake
     libreoffice-qt6
     git
@@ -198,6 +200,9 @@
     krabby
     android-studio
     flutter
+    texliveFull
+    zathura
+    texlab
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
