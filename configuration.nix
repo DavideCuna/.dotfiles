@@ -137,7 +137,7 @@
 
   # Install firefox.
   programs.firefox.enable = true;
-  programs.waybar.enable = true;
+  # programs.waybar.enable = true;
   programs.hyprland = {
     enable = true;
     withUWSM = true;
