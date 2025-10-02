@@ -190,7 +190,6 @@
     hyprlock
     hyprcursor
     greetd.tuigreet
-    waybar
     rofi-wayland
     wl-clipboard-rs
     phinger-cursors

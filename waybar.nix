@@ -2,17 +2,13 @@
 {
   programs.waybar = {
     enable = true;
-    settings = {
+    settings = lib.mkForce {
       mainBar = {
         layer = "top";
         position = "top";
         spacing = 12;
-        output = [
-          "eDP-1"
-          "HDMI-A-1"
-        ];
         modules-left = [ "hyprland/workspaces" "hyprland/window" ];
-        modules-center = [ "clock" "custom/pomodoro" ];
+        modules-center = [ "clock" ];
         modules-right = [
           "cpu"
           "memory"
@@ -21,16 +17,7 @@
           "backlight"
           "battery"
         ];
-      };
-
-      "custom/pomodoro" = {
-        format = "{}";
-        return-type = "json";
-        exec = "${config.home.homeDirectory}/.local/bin/pomodoro.sh";
-        on-click = "${config.home.homeDirectory}/.local/bin/pomodoro.sh start";
-        on-click-right = "${config.home.homeDirectory}/.local/bin/pomodoro.sh reset";
-        interval = 1;
-      };
+				# };
 
       "pulseaudio" = {
         format = "{icon} {volume}%";
@@ -54,8 +41,8 @@
       "battery" = {
         states = {
           good = 80;
-          warning = 20;
-          critical = 10;
+          warning = 40;
+          critical = 20;
         };
         format = "{icon} {capacity}%";
         format-charging = "󰂄 {capacity}%";
@@ -64,6 +51,7 @@
         format-critical = "󰂃 {capacity}%";
       };
     };
+		};
 
     style = ''
       /* Color palette */
