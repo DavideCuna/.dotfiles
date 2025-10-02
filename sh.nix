@@ -8,7 +8,7 @@ let
     ycd = "cd \"$(yazi --print-cwd)\"";
   };
 in {
-  programs = { 
+  programs = {
     bash = {
       enable = true;
       enableCompletion = true;
@@ -26,13 +26,32 @@ in {
         theme = "half-life";
         plugins = [ "git" ];
       };
+
+      # Override colori del tema usando la palette globale
+      initExtra = ''
+        # Palette colori importata dal modulo colorscheme.nix
+        export ZSH_ACCENT='${palette.colorscheme.accent}'
+        export ZSH_BROWN='${palette.colorscheme.brown}'
+        export ZSH_RUST='${palette.colorscheme.rust}'
+        export ZSH_DARK='${palette.colorscheme.dark}'
+        export ZSH_METAL='${palette.colorscheme.metal}'
+        export ZSH_BG='${palette.colorscheme.bg}'
+        export ZSH_BGALT='${palette.colorscheme.bgAlt}'
+        export ZSH_FG='${palette.colorscheme.fg}'
+        export ZSH_WARNING='${palette.colorscheme.warning}'
+        export ZSH_CRITICAL='${palette.colorscheme.critical}'
+
+        # Prompt custom che usa la palette
+        PROMPT='%F{$ZSH_ACCENT}%n%f at %F{$ZSH_BROWN}%~%f %F{$ZSH_RUST}$ %f'
+        # Se usi powerlevel10k, puoi referenziare queste variabili nei segmenti custom!
+      '';
     };
     kitty = {
       enable = true;
       extraConfig = ''
         background_opacity 0.37
         background_blur 1
-        font_family IosevkaTerm Nerd Font 
+        font_family IosevkaTerm Nerd Font
         font_size 12
         show_hyperlink_targets yes
         background #0e1419

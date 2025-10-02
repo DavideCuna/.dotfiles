@@ -8,6 +8,7 @@
     ./waybar.nix
     ./rofi.nix
     ./scripts.nix
+    ./palette.nix
   ];
 
   # Home Manager needs a bit of information about you and the paths it should
@@ -83,7 +84,7 @@
   programs.yazi = {
     enable = true;
     settings = {
-      flavor = "ashen";
+      flavor = "miniautumn";
       opener = {
         edit = [
           { run = "nvim \"$@\""; block = true; desc = "Edit with Neovim"; }
