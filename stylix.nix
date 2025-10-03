@@ -1,4 +1,4 @@
-{ pkgs, … }: 
+{ pkgs, ... }: 
  
 {
  
@@ -21,8 +21,6 @@
 	base0F = "#ff3333"; # red (waybar)
   };
   
-  # Don’t forget to apply wallpaper
-  
-  stylix.image = "/home/davide/Pictures/wallpapers/lain5.jpg"
+  stylix.image = "/home/davide/Pictures/wallpapers/lain5.jpg";
  
 }
