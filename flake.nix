@@ -9,9 +9,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hyprland.url = "github:hyprwm/Hyprland";
+    stylix.url = "github:danth/stylix";
   };
 
-  outputs = { self, nixpkgs, home-manager, hyprland, ...}:
+  outputs = { self, nixpkgs, home-manager, hyprland, stylix, ...}@inputs :
   let
     system = "x86_64-linux";
     lib = nixpkgs.lib;
@@ -22,12 +23,17 @@
         inherit system;
         modules = [
           ./configuration.nix
+
+	# Home Manager
 	  home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.users.davide = import ./home.nix;
             }
+
+	# Stylix
+	  inputs.stylix.nixosModules.stylix
         ];
       };
     };

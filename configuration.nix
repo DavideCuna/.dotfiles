@@ -189,6 +189,7 @@
     hyprpaper
     hyprlock
     hyprcursor
+    hyprshot
     greetd.tuigreet
     rofi-wayland
     wl-clipboard-rs

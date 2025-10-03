@@ -17,7 +17,6 @@
           "backlight"
           "battery"
         ];
-				# };
 
       "pulseaudio" = {
         format = "{icon} {volume}%";
@@ -27,7 +26,7 @@
           default = ["󰕾" "󰖀" "󰕿"];
         };
         on-click = "pavucontrol";
-        scroll-step = 5;
+        scroll-step = 7;
       };
 
       "backlight" = {
