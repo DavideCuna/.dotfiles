@@ -5,20 +5,16 @@
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-25.05";
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
+      url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hyprland = {
       url = "github:hyprwm/Hyprland";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    stylix = {
-      url = "github:nix-community/stylix/release-25.05";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
-  outputs = { self, nixpkgs, home-manager, hyprland, stylix, ...}:
+  outputs = { self, nixpkgs, home-manager, hyprland, ...}:
   let
     system = "x86_64-linux";
     lib = nixpkgs.lib;
@@ -30,24 +26,24 @@
         modules = [
           ./configuration.nix
 
-	# # Home Manager
-	#   home-manager.nixosModules.home-manager
-	#            {
-	#              home-manager.useGlobalPkgs = true;
-	#              home-manager.useUserPackages = true;
-	#              home-manager.users.davide = import ./home.nix;
-	#            }
-
-	# Stylix
-	  # stylix.nixosModules.stylix
-           ./stylix.nix
+	# Home Manager
+	  home-manager.nixosModules.home-manager
+	           {
+	             home-manager.useGlobalPkgs = true;
+	             home-manager.useUserPackages = true;
+	             home-manager.users.davide = import ./home.nix;
+	           }
         ];
       };
     };
     homeConfigurations = {
       davide = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
-        modules = [ ./home.nix ];
+        modules = [ 
+          ./home.nix
+        ];
+        username = "davide";
+        homeDirectory = "/home/davide/";
       };
     };
   };
