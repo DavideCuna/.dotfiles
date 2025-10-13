@@ -8,11 +8,17 @@
       url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hyprland.url = "github:hyprwm/Hyprland";
-    stylix.url = "github:danth/stylix";
+    hyprland = {
+      url = "github:hyprwm/Hyprland";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    stylix = {
+      url = "github:nix-community/stylix/release-25.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, hyprland, stylix, ...}@inputs :
+  outputs = { self, nixpkgs, home-manager, hyprland, stylix, ...}:
   let
     system = "x86_64-linux";
     lib = nixpkgs.lib;
@@ -24,17 +30,24 @@
         modules = [
           ./configuration.nix
 
-	# Home Manager
-	  home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.davide = import ./home.nix;
-            }
+	# # Home Manager
+	#   home-manager.nixosModules.home-manager
+	#            {
+	#              home-manager.useGlobalPkgs = true;
+	#              home-manager.useUserPackages = true;
+	#              home-manager.users.davide = import ./home.nix;
+	#            }
 
 	# Stylix
-	  inputs.stylix.nixosModules.stylix
+	  # stylix.nixosModules.stylix
+           ./stylix.nix
         ];
+      };
+    };
+    homeConfigurations = {
+      davide = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        modules = [ ./home.nix ];
       };
     };
   };

@@ -66,6 +66,7 @@
         user = "greeter";
       };
     };
+
     # displayManager.ly.enable = true;
     # desktopManager.plasma6.enable = true;
     xserver = {
@@ -168,12 +169,17 @@
     kitty
     discord
     lua
+    lua-language-server
     tree-sitter
     ripgrep
     fd
     nodejs
+    vimPlugins.markdown-preview-nvim
+    markdownlint-cli
     jdk24
     gcc
+    clang-tools
+    pyright
     zip
     unzip
     fzf
@@ -183,7 +189,6 @@
     wget
     zsh
     oh-my-zsh
-    zsh-powerlevel10k
     bitwarden-cli
     bitwarden-desktop
     hyprland
@@ -204,6 +209,7 @@
     texliveFull
     zathura
     texlab
+    vimPlugins.nvim-cmp
   ];
 
   # Some programs need SUID wrappers, can be configured further or are

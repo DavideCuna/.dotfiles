@@ -1,7 +1,9 @@
 { pkgs, ... }: 
  
 {
- 
+
+  stylix.enable = true;
+
   stylix.base16Scheme = {
 	base00 = "#191411"; # dark
 	base01 = "#26211c"; # bg-alt
@@ -21,6 +23,6 @@
 	base0F = "#ff3333"; # red (waybar)
   };
   
-  stylix.image = "/home/davide/Pictures/wallpapers/lain5.jpg";
+  # stylix.image = "/home/davide/Pictures/wallpapers/lain5.jpg";
  
 }

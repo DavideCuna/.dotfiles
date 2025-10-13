@@ -5,9 +5,9 @@ let
     ll = "ls -l";
     ".." = "cd ..";
     cp = "cp -i";
-    ycd = "cd \"$(yazi --print-cwd)\"";
+    uni = "cd /home/davide/Desktop/Uni_work";
   };
-  palette = import ./palette.nix;
+  palette = import ./stylix.nix;
 in {
   programs = {
     bash = {
