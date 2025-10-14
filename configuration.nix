@@ -65,22 +65,8 @@
         user = "greeter";
       };
     };
-
-    # displayManager.ly.enable = true;
-    # desktopManager.plasma6.enable = true;
-    # xserver = {
-    #   enable = true;
-    #   windowManager.i3 = {
-    #     enable = true;
-    #     extraPackages = with pkgs; [
-    #       dmenu
-    #       i3status
-    #       i3lock
-    #       i3blocks
-    #     ];
-    #     package = pkgs.i3-gaps;
-    #   };
-    # };
+    power-profiles-daemon.enable = true;
+    
   };
 
   # Fingerprint reader
