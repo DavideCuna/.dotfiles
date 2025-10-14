@@ -1,16 +1,11 @@
 { config, pkgs, lib, ... }:
 let
-  # ------------------------------------------------------------------
-  # Variabili per Palette e Script (Senza Modifiche Agli Script)
-  # ------------------------------------------------------------------
-  # Assumi che 'palette' importi il file con i colori aggiornati.
   palette = import ./theme/palette.nix;
   c = palette.colors;
 
-  # Volume script (default sink) – (MANTENUTO INVARIATO)
+  # Volume script (wpctl)
   volumeScript = pkgs.writeShellScript "waybar-volume" ''
     set -u
-
     get_status() {
       wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null || true
     }
@@ -20,7 +15,7 @@ let
 
     status="$(get_status)"
     if [ -z "$status" ]; then
-      echo '{"text":" ?","class":"error","tooltip":"No default sink"}'
+      echo '{"text":"[AUDIO_ERR]","class":"error","tooltip":"No default sink"}'
       exit 0
     fi
 
@@ -31,12 +26,12 @@ let
     pct="$(awk -v v="$vol" 'BEGIN{ if (v+0<0) v=0; if (v>5) v=5; printf "%d", v*100+0.5 }')"
 
     if [ "$muted" -eq 1 ] || [ "$pct" -eq 0 ]; then
-      icon=""; class="muted"
+      text="[MUTED]"; class="muted"
     else
-      if    [ "$pct" -le 30 ]; then icon=""; class="low"
-      elif [ "$pct" -le 70 ]; then icon=""; class="mid"
-      elif [ "$pct" -le 100 ]; then icon=""; class="high"
-      else icon=""; class="over"
+      text="[VOL:$pct%]"
+      if    [ "$pct" -le 30 ]; then class="low"
+      elif [ "$pct" -le 70 ]; then class="mid"
+      else class="high"
       fi
     fi
 
@@ -44,30 +39,28 @@ let
     sinkName="$(printf "%s" "$sinkLine" | tr -d '│' | sed -E 's/.*\* *[0-9]+\.\s*//; s/\s*\[vol:.*//')"
     [ -z "$sinkName" ] && sinkName="Unknown"
 
-    tooltip="Output: $sinkName\nVolume: $pct%"
-    [ "$muted" -eq 1 ] && tooltip="$tooltip (muted)"
+    tooltip=">>OUTPUT: $sinkName\n>>LEVEL: $pct%"
+    [ "$muted" -eq 1 ] && tooltip="$tooltip\n>>STATUS: MUTED"
 
     tooltipEscaped="$(printf "%s" "$tooltip" | sed ':a;N;$!ba;s/\\/\\\\/g; s/\n/\\n/g; s/"/\\"/g')"
 
-    printf '{"text":"%s %s%%","class":"%s","tooltip":"%s"}\n' \
-      "$icon" "$pct" "$class" "$tooltipEscaped"
+    printf '{"text":"%s","class":"%s","tooltip":"%s"}\n' \
+      "$text" "$class" "$tooltipEscaped"
   '';
 
-  # Mic script (default source) – (MANTENUTO INVARIATO)
+  # Mic script (wpctl)
   micScript = pkgs.writeShellScript "waybar-mic" ''
     set -u
-
     get_status() {
       wpctl get-volume @DEFAULT_AUDIO_SOURCE@ 2>/dev/null || true
     }
-
     get_star_source_line() {
       wpctl status | awk '/Sources:/{f=1;next} /Filters:/{f=0} f && /\*/{print; exit}'
     }
 
     status="$(get_status)"
     if [ -z "$status" ]; then
-      echo '{"text":" ?","class":"error","tooltip":"No default source"}'
+      echo '{"text":"[MIC_ERR]","class":"error","tooltip":"No default source"}'
       exit 0
     fi
 
@@ -78,12 +71,11 @@ let
     pct="$(awk -v v="$vol" 'BEGIN{ if (v+0<0) v=0; if (v>5) v=5; printf "%d", v*100+0.5 }')"
 
     if [ "$muted" -eq 1 ] || [ "$pct" -eq 0 ]; then
-      icon=""; class="muted"
+      text="[MIC:OFF]"; class="muted"
     else
-      icon=""
+      text="[MIC:$pct%]"
       if    [ "$pct" -le 30 ]; then class="low"
       elif [ "$pct" -le 70 ]; then class="mid"
-      elif [ "$pct" -le 100 ]; then class="high"
       else class="high"
       fi
     fi
@@ -92,16 +84,16 @@ let
     srcName="$(printf "%s" "$srcLine" | tr -d '│' | sed -E 's/.*\* *[0-9]+\.\s*//; s/\s*\[vol:.*//')"
     [ -z "$srcName" ] && srcName="Unknown"
 
-    tooltip="Input: $srcName\nLevel: $pct%"
-    [ "$muted" -eq 1 ] && tooltip="$tooltip (muted)"
+    tooltip=">>INPUT: $srcName\n>>LEVEL: $pct%"
+    [ "$muted" -eq 1 ] && tooltip="$tooltip\n>>STATUS: MUTED"
 
     tooltipEscaped="$(printf "%s" "$tooltip" | sed ':a;N;$!ba;s/\\/\\\\/g; s/\n/\\n/g; s/"/\\"/g')"
 
-    printf '{"text":"%s %s%%","class":"%s","tooltip":"%s"}\n' \
-      "$icon" "$pct" "$class" "$tooltipEscaped"
+    printf '{"text":"%s","class":"%s","tooltip":"%s"}\n' \
+      "$text" "$class" "$tooltipEscaped"
   '';
 
-  # Device picker (sink | source) – (MANTENUTO INVARIATO)
+  # Device picker
   pickerScript = pkgs.writeShellScript "waybar-audio-picker" ''
     mode="$1"
     [ -z "$mode" ] && mode="sink"
@@ -119,52 +111,46 @@ let
       f && /^[[:space:]]*\*?[[:space:]]*[0-9]+\./ {
         line=$0
         gsub(/│/,"",line)
-        # Trim leading space
         sub(/^[[:space:]]*/,"",line)
         mark=""
-        if (substr(line,1,1)=="*") { mark="*"; sub(/^\*/,"",line); sub(/^[[:space:]]*/,"",line) }
-        # Grab ID (up to first dot)
+        if (substr(line,1,1)=="*") { mark=">> "; sub(/^\*/,"",line); sub(/^[[:space:]]*/,"",line) }
         id=line
         sub(/\..*/,"",id)
-        # Device description (remove leading id + dot + spaces)
         desc=line
         sub(/^[0-9]+\.[[:space:]]*/,"",desc)
-        # Cut off [vol: ...] part
         sub(/\[vol:.*$/,"",desc)
         gsub(/[[:space:]]+$/,"",desc)
-        print id "\t" mark desc
+        print mark id " | " desc
       }')"
 
     if [ -z "$entries" ]; then
-      command -v notify-send >/dev/null && notify-send "Audio" "No $mode devices parsed"
+      command -v notify-send >/dev/null && notify-send ">>AUDIO" "No $mode devices found"
       exit 0
     fi
     if [ "$(printf "%s" "$entries" | wc -l)" -le 1 ]; then
-      command -v notify-send >/dev/null && notify-send "Audio" "Only one $mode device"
+      command -v notify-send >/dev/null && notify-send ">>AUDIO" "Only one $mode device"
       exit 0
     fi
-    choice="$(echo "$entries" | rofi -dmenu -p "Select $mode")"
+    choice="$(echo "$entries" | rofi -dmenu -p ">>SELECT_$mode")"
     [ -z "$choice" ] && exit 0
-    id="$(printf "%s" "$choice" | cut -f1)"
+    id="$(printf "%s" "$choice" | sed 's/^>> //;s/ |.*//')"
     wpctl set-default "$id"
-    command -v notify-send >/dev/null && notify-send "Audio" "Default $mode -> $id"
+    command -v notify-send >/dev/null && notify-send ">>AUDIO" "Default $mode set to ID:$id"
     pkill -USR2 waybar 2>/dev/null || true
   '';
 
-  # Slider helper (bar generator) – (MANTENUTO INVARIATO)
+  # Volume sliders
   mkSliderBar = pkgs.writeShellScript "gen-bar" ''
-    # usage: gen-bar <percent>
     p=$1
     segs=20
     filled=$(( (p*segs)/100 ))
     [ $filled -gt $segs ] && filled=$segs
-    bar="$(printf '%*s' "$filled" "" | tr ' ' '#')"
+    bar="$(printf '%*s' "$filled" "" | tr ' ' '█')"
     unfilled=$(( segs - filled ))
-    bar="$bar$(printf '%*s' "$unfilled" "" | tr ' ' '-')"
+    bar="$bar$(printf '%*s' "$unfilled" "" | tr ' ' '░')"
     printf "[%s] %3d%%" "$bar" "$p"
   '';
 
-  # Output volume slider – (MANTENUTO INVARIATO)
   volumeSlider = pkgs.writeShellScript "waybar-volume-slider" ''
     cur=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null | awk '{print $2}')
     curPct=$(awk -v v="$cur" 'BEGIN{printf "%d", v*100+0.5}')
@@ -172,13 +158,13 @@ let
     for p in $(seq 0 5 100); do
       line="$(${mkSliderBar} $p)"
       if [ "$p" -eq "$curPct" ]; then
-        line="* $line"
+        line=">> $line"
       else
-        line="  $line"
+        line="   $line"
       fi
       list="$list$line"$'\n'
     done
-    choice="$(printf "%s" "$list" | rofi -dmenu -p 'Output Vol' | sed 's/^* //;s/^  //')"
+    choice="$(printf "%s" "$list" | rofi -dmenu -p '>>OUTPUT_VOL' | sed 's/^>> //;s/^   //')"
     [ -z "$choice" ] && exit 0
     sel=$(printf "%s" "$choice" | awk -F'%' '{print $1}' | awk '{print $NF}')
     [ -z "$sel" ] && exit 0
@@ -186,7 +172,6 @@ let
     pkill -USR2 waybar 2>/dev/null || true
   '';
 
-  # Mic volume slider – (MANTENUTO INVARIATO)
   micSlider = pkgs.writeShellScript "waybar-mic-slider" ''
     cur=$(wpctl get-volume @DEFAULT_AUDIO_SOURCE@ 2>/dev/null | awk '{print $2}')
     curPct=$(awk -v v="$cur" 'BEGIN{printf "%d", v*100+0.5}')
@@ -194,13 +179,13 @@ let
     for p in $(seq 0 5 100); do
       line="$(${mkSliderBar} $p)"
       if [ "$p" -eq "$curPct" ]; then
-        line="* $line"
+        line=">> $line"
       else
-        line="  $line"
+        line="   $line"
       fi
       list="$list$line"$'\n'
     done
-    choice="$(printf "%s" "$list" | rofi -dmenu -p 'Mic Level' | sed 's/^* //;s/^  //')"
+    choice="$(printf "%s" "$list" | rofi -dmenu -p '>>MIC_LEVEL' | sed 's/^>> //;s/^   //')"
     [ -z "$choice" ] && exit 0
     sel=$(printf "%s" "$choice" | awk -F'%' '{print $1}' | awk '{print $NF}')
     [ -z "$sel" ] && exit 0
@@ -208,7 +193,6 @@ let
     pkill -USR2 waybar 2>/dev/null || true
   '';
 
-  # Brightness slider – (MANTENUTO INVARIATO)
   brightnessSlider = pkgs.writeShellScript "waybar-brightness-slider" ''
     max=$(brightnessctl m 2>/dev/null)
     curRaw=$(brightnessctl g 2>/dev/null)
@@ -218,13 +202,13 @@ let
     for p in $(seq 0 5 100); do
       line="$(${mkSliderBar} $p)"
       if [ "$p" -eq "$curPct" ]; then
-        line="* $line"
+        line=">> $line"
       else
-        line="  $line"
+        line="   $line"
       fi
       list="$list$line"$'\n'
     done
-    choice="$(printf "%s" "$list" | rofi -dmenu -p 'Brightness' | sed 's/^* //;s/^  //')"
+    choice="$(printf "%s" "$list" | rofi -dmenu -p '>>BRIGHTNESS' | sed 's/^>> //;s/^   //')"
     [ -z "$choice" ] && exit 0
     sel=$(printf "%s" "$choice" | awk -F'%' '{print $1}' | awk '{print $NF}')
     [ -z "$sel" ] && exit 0
@@ -235,47 +219,64 @@ in
   programs.waybar = {
     enable = true;
 
-    # ------------------------------------------------------------------
-    # SETTINGS (Non toccato, solo riorganizzato)
-    # ------------------------------------------------------------------
     settings = {
       mainBar = {
         layer = "top";
         position = "top";
-        spacing = 4;
+        spacing = 0;
         output = [ "eDP-1" "HDMI-A-1" ];
 
-        modules-left   = [ "hyprland/workspaces" "group/sel" ];
-        modules-center = [ "clock" ];
-        modules-right  = [ "tray" "network" "group/sys" ];
+        # Layout: System info left, workspaces center, status right
+        modules-left   = [ "custom/logo" "cpu" "memory" "custom/battery" ];
+        modules-center = [ "hyprland/workspaces" ];
+        modules-right  = [ "network" "custom/volume" "custom/mic" "backlight" "clock" ];
 
-        backlight = {
-          format = "{icon} ";
-          interval = 2;
-          "format-icons" = [ "󰃞" "󰃞" "󰃟" "󰃟" "󰃠" "󰃠" ];
-          on-click-middle = "${brightnessSlider}";
-          on-scroll-up = "brightnessctl set 5%+ -q";
-          on-scroll-down = "brightnessctl set 5%- -q";
-        }; 
+        "custom/logo" = {
+          format = ">>雪花";
+          tooltip = false;
+        };
+
+        "hyprland/workspaces" = {
+          format = "[{id}]";
+          on-click = "activate";
+          all-outputs = false;
+          active-only = false;
+        };
+
+        clock = {
+          interval = 1;
+          format = "[{:%H:%M:%S}]";
+          format-alt = "[{:%Y.%m.%d}]";
+          tooltip-format = ">>PRESENT_DAY\n>>PRESENT_TIME\n\n{:%Y-%m-%d %H:%M:%S}";
+        };
+
         cpu = {
-          format = " {usage}%";
+          format = "[CPU:{usage}%]";
           interval = 2;
           states = { warning = 70; critical = 90; };
         };
 
         memory = {
-          format = " {percentage}%";
+          format = "[MEM:{percentage}%]";
           interval = 5;
           states = { warning = 70; critical = 85; };
         };
 
         network = {
           interval = 5;
-          format-wifi = "  {essid} ({signalStrength}%)";
-          format-ethernet = "󰈀  {ipaddr}";
-          format-disconnected = "󰖪  Disconnected";
-          tooltip = true;
+          format-wifi = "[NET:{essid}]";
+          format-ethernet = "[NET:WIRED]";
+          format-disconnected = "[NET:DOWN]";
+          tooltip-format = ">>SSID: {essid}\n>>SIGNAL: {signalStrength}%\n>>IP: {ipaddr}";
           on-click = "${pkgs.kitty}/bin/kitty -e nmtui";
+        };
+
+        backlight = {
+          format = "[BRI:{percent}%]";
+          interval = 2;
+          on-click-middle = "${brightnessSlider}";
+          on-scroll-up = "brightnessctl set 5%+ -q";
+          on-scroll-down = "brightnessctl set 5%- -q";
         };
 
         "custom/volume" = {
@@ -302,219 +303,211 @@ in
           on-click-middle = "${micSlider}";
         };
 
-        "group/sel" = {
-          orientation = "horizontal";
-          modules = [ "custom/volume" "custom/mic" "backlight" ];
-        };
-
         "custom/battery" = {
           interval = 1;
           return-type = "json";
           format = "{}";
-          on-click-right = "${pkgs.bash}/bin/bash -c 'if command -v powerprofilesctl >/dev/null; then cur=$(powerprofilesctl get); case $cur in performance) nxt=balanced;; balanced) nxt=power-saver;; power-saver) nxt=performance;; *) nxt=balanced;; esac; powerprofilesctl set \"$nxt\"; fi'";
+          on-click-right = "${pkgs.bash}/bin/bash -c 'if command -v powerprofilesctl >/dev/null; then cur=$(powerprofilesctl get); case $cur in performance) nxt=balanced;; balanced) nxt=power-saver;; power-saver) nxt=performance;; *) nxt=balanced;; esac; powerprofilesctl set \"$nxt\"; notify-send \">>POWER\" \"Profile: $nxt\"; fi'";
           exec = ''
             ${pkgs.bash}/bin/bash -c '
             cap_file=/sys/class/power_supply/BAT0/capacity
             status_file=/sys/class/power_supply/BAT0/status
             if [ -r "$cap_file" ]; then cap=$(cat "$cap_file"); else cap="?"; fi
-              if [ -r "$status_file" ]; then st=$(cat "$status_file"); else st="Unknown"; fi
+            if [ -r "$status_file" ]; then st=$(cat "$status_file"); else st="Unknown"; fi
 
-                icon=""
-                  if [ "$cap" != "?" ]; then
-                    [ "$cap" -gt 15 ] && icon=""
-                      [ "$cap" -gt 35 ] && icon=""
-                        [ "$cap" -gt 60 ] && icon=""
-                          [ "$cap" -gt 85 ] && icon=""
-                            fi
-              case "$st" in
-                Charging) icon="" ;;
-                Full) icon="" ;;
-                esac
+            text="[BAT:$cap%]"
+            classes=$(echo "$st" | tr "A-Z" "a-z")
+            
+            if [ "$cap" != "?" ]; then
+              if [ "$cap" -le 10 ]; then classes="$classes critical"
+              elif [ "$cap" -le 25 ]; then classes="$classes warning"
+              fi
+            fi
 
-                  classes=$(echo "$st" | tr "A-Z" "a-z")
-                  if [ "$cap" != "?" ]; then
-                    if [ "$cap" -le 10 ]; then classes="$classes critical"
-                      elif [ "$cap" -le 25 ]; then classes="$classes warning"
-                        fi
-                        fi
+            profile=""
+            if command -v powerprofilesctl >/dev/null; then
+              profile=$(powerprofilesctl get 2>/dev/null)
+            fi
 
-                        profile=""
-                        if command -v powerprofilesctl >/dev/null; then
-                          profile=$(powerprofilesctl get 2>/dev/null)
-                          fi
+            tooltip=">>STATUS: $st\n>>CAPACITY: $cap%"
+            [ -n "$profile" ] && tooltip="$tooltip\n>>PROFILE: $profile"
 
-                          tooltip="Status: $st"
-                          [ -n "$profile" ] && tooltip="$tooltip\nProfile: $profile"
-
-                          printf '"'"'{"text":"%s %s%%","tooltip":"%s","class":"%s","alt":"%s"}\n'"'"' \
-                            "$icon" "$cap" "$(printf %s "$tooltip" | sed '"'"'s/"/\\"/g'"'"')" "$classes" "$profile"
-                            '
-                            '';
-        };
-        "group/sys" = {
-          orientation = "horizontal";
-          modules = [ "cpu" "memory" "custom/battery" ];
+            printf '"'"'{"text":"%s","tooltip":"%s","class":"%s"}\n'"'"' \
+              "$text" "$(printf %s "$tooltip" | sed '"'"'s/"/\\"/g'"'"')" "$classes"
+            '
+          '';
         };
       };
     };
-    
-    # ------------------------------------------------------------------
-    # STYLE (CSS) - Adattato alla nuova palette
-    # ------------------------------------------------------------------
-    style = ''
-      /* Color Definitions */
-      @define-color accent  ${c.cyan};        /* TURCHESE/CIANO: Accento principale (digitale, contrasto) */
-      @define-color accent2 ${c.yellowBright}; /* ORO VIVACE: Accento secondario (warning/highlight) */
-      @define-color fg      ${c.fg};          /* GRIGIO CALDO: Testo principale */
-      @define-color fg-alt  ${c.fgAlt};       /* MARRONE GRIGIO: Testo secondario */
-      @define-color bg      ${c.bg};          /* NERO/BLU SCURO: Sfondo */
-      @define-color bg-alt  ${c.bgAlt};       /* SFUMATURA SCURA: Hover/Sfondi alternativi */
-      @define-color border  ${c.border};      /* GRIGIO SCURO: Bordi */
-      @define-color warn    ${c.warn};        /* GIALLO/ORO: Warning */
-      @define-color error   ${c.error};       /* ROSSO: Errore */
-      @define-color ok      ${c.ok};          /* VERDE: OK/Successo */
-      @define-color blueIce ${c.blueIce};     /* TURCHESE/CIANO (Alias per accent) */
 
-      /* Trasparenza leggermente ridotta per un effetto "lievemente opaco" */
-      @define-color bgTrans rgba(30,32,37,0.92); 
+    style = ''
+      /* Lain Aesthetic - Cyberpunk Terminal */
+      @define-color lain-fg       ${c.fg};
+      @define-color lain-fg-dim   ${c.fgAlt};
+      @define-color lain-bg       ${c.bg};
+      @define-color lain-bg-alt   ${c.bgAlt};
+      @define-color lain-border   ${c.border};
+      @define-color lain-accent   ${c.cyan};
+      @define-color lain-accentB  ${c.cyanBright};
+      @define-color lain-warn     ${c.warn};
+      @define-color lain-error    ${c.error};
+      @define-color lain-ok       ${c.ok};
 
       * {
-        font-size: 13px;
-        min-height: 0;
+        font-size: 15px;
         font-family: "IosevkaTerm Nerd Font";
+        min-height: 3px;
+        border: none;
+        border-radius: 3px;
       }
 
       window#waybar {
-        background-color: transparent;
-        border-bottom: none;
-        color: @fg;
-        /* Padding leggermente ridotto per un look più compatto */
-        padding: 4px 8px; 
+        background: 
+          repeating-linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0.15) 0px,
+            transparent 1px,
+            transparent 2px
+          ),
+          rgba(0, 0, 0, 0.85);
+        color: @lain-fg;
+        border-bottom: 1px solid @lain-border;
+        padding: 0;
+        margin: 0;
       }
 
-      /* --- Workspaces --- */
-      #workspaces {
-        padding: 0 4px; /* Rimuovi padding extra per allineamento */
+      /* Logo/System ID */
+      #custom-logo {
+        padding: 0 12px;
+        background: @lain-bg;
+        color: @lain-accentB;
+        font-weight: normal;
+        border-right: 1px solid @lain-border;
+        letter-spacing: 1px;
       }
-      #workspaces button {
-        padding: 1px 10px;
-        color: @fg-alt; /* Meno invasivo */
+
+      /* System monitors */
+      #cpu,
+      #memory,
+      #custom-battery {
+        padding: 0 10px;
+        color: @lain-fg;
         background: transparent;
-        border: none;
-        border-radius: 8px;
-        margin: 0 1px;
+        border-right: 1px solid @lain-border;
       }
-      #workspaces button.focused {
-        color: @accent; /* Highlight Ciano/Turchese */
+
+      #cpu.warning,
+      #memory.warning,
+      #custom-battery.warning {
+        color: @lain-warn;
+        animation: blink-warning 2s ease-in-out infinite;
+      }
+
+      #cpu.critical,
+      #memory.critical,
+      #custom-battery.critical {
+        color: @lain-error;
+        animation: blink-critical 1s ease-in-out infinite;
+      }
+
+      #custom-battery.charging { color: @lain-accentB; }
+      #custom-battery.full { color: @lain-accent; }
+
+      /* Workspaces - Center, minimal */
+      #workspaces {
+        padding: 0 8px;
+        background: transparent;
+      }
+
+      #workspaces button {
+        padding: 0 6px;
+        color: @lain-fg-dim;
+        background: transparent;
+        transition: all 0.2s ease;
+      }
+
+      #workspaces button.active {
+        color: @lain-accent;
         font-weight: bold;
-        background: @bg-alt;
-        border-bottom: 2px solid @accent; /* Linea accentata sotto */
-        border-radius: 0; /* Rimuovi border-radius per la linea */
+        text-shadow: 0 0 8px @lain-accent;
       }
+
       #workspaces button:hover {
-        background: @bg-alt;
-        color: @fg;
+        color: @lain-fg;
+        background: @lain-bg-alt;
       }
-      /* Indicatori speciali (urgent/special) */
+
       #workspaces button.urgent {
-        color: @error;
-        background: rgba(212,58,58, 0.2); /* Rosso semi-trasparente */
+        color: @lain-error;
+        animation: blink-urgent 0.5s ease-in-out infinite;
       }
 
-
-      /* --- Bubble singoli e gruppi (look più pulito) --- */
-      
-      /* Bubble Singoli (Clock, Tray, Network) */
-      #clock,
-      #tray,
-      #network {
-        background-color: @bg-alt; /* Sfondo alternativo per staccare leggermente */
-        color: @fg;
-        padding: 1px 10px;
-        margin: 0 4px; /* Margine leggermente ridotto */
-        border-radius: 16px;
-        border: 1px solid @border;
-        min-width: 38px;
-      }
-      #network:hover {
-        border: 1px solid @accent; /* Accent Ciano/Turchese su hover */
+      /* Right side modules */
+      #network,
+      #custom-volume,
+      #custom-mic,
+      #backlight,
+      #clock {
+        padding: 0 10px;
+        color: @lain-fg;
+        background: transparent;
+        border-left: 1px solid @lain-border;
       }
 
-      /* Bubble Gruppi (System/Audio) */
-      #sys,
-      #sel {
-        background-color: @bg-alt; 
-        border-radius: 16px;
-        border: 1px solid @border;
-        padding: 1px 10px;
-        margin: 0 4px;
-        min-width: 36px;
+      /* Audio states */
+      #custom-volume.muted,
+      #custom-mic.muted {
+        color: @lain-error;
       }
-
-      /* Hover sui gruppi */
-      #sel:hover,
-      #sys:hover {
-        border-color: @accent; /* Accent Ciano/Turchese su hover */
-      }
-
-
-      /* === STRUTTURA MODULO PER MODULO PADDING (MANTENUTO) === */
-      #cpu { padding: 1px 5px; }
-      #custom-battery { padding: 1px 5px; }
-      #memory { padding: 1px 5px; }
-      #custom-volume{ padding: 1px 5px; }
-      #custom-mic{ padding: 1px 5px; }
-      #backlight{ padding: 1px 5px; padding-right: 1px; }
-
-
-      /* --- Stati & colori --- */
-
-      /* Audio */
-      #custom-volume.low,
-      #custom-mic.low { color: @fg-alt; }
-
-      #custom-volume.mid,
-      #custom-mic.mid { color: @fg; border-color: @accent; } /* Testo principale con bordo Ciano */
 
       #custom-volume.high,
-      #custom-mic.high { color: @accent; } /* Accent Ciano/Turchese */
-
-      #custom-volume.over { color: @warn; }
-
-      #custom-volume.muted,
-      #custom-mic.muted { color: @error; }
-
-      /* CPU & RAM */
-      #cpu { color: @accent2; } /* Oro Vivace */
-      #memory { color: @accent2; } /* Oro Vivace */
-      #cpu.warning, #memory.warning { color: @warn; }
-      #cpu.critical, #memory.critical { color: @error; }
-
-      /* Battery */
-      #custom-battery { color: @accent; } /* Accent Ciano/Turchese */
-      #custom-battery.charging    { color: @ok; }
-      #custom-battery.full        { color: @accent; } 
-      #custom-battery.discharging.warning { color: @warn; }
-      #custom-battery.discharging.critical { color: @error; }
-      #custom-battery.unknown     { color: @fg-alt; }
-
-      /* Network */
-      #network { color: @accent2; } /* Oro Vivace */
-
-      /* Tray */
-      #tray {
-        margin-left: 6px;
-        margin-right: 6px;
-        padding: 4px;
-        background: @bg-alt; /* Usa bg-alt per uniformità */
-        border: none;
+      #custom-mic.high {
+        color: @lain-accent;
       }
 
-      /* Clock */
-      #clock { color: @accent2; } /* Ora in Oro Vivace */
+      /* Clock - special highlight */
+      #clock {
+        color: @lain-accent;
+        font-weight: bold;
+        border-left: 1px solid @lain-accent;
+        letter-spacing: 0.5px;
+      }
 
-      /* Backlight */
-      #backlight { color: @accent; } /* Accent Ciano/Turchese */
+      /* Network state */
+      #network.disconnected {
+        color: @lain-error;
+      }
+
+      /* Animations */
+      @keyframes blink-warning {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+      }
+
+      @keyframes blink-critical {
+        0% { opacity: 1; }
+        50% { opacity: 0.3; }
+        100% { opacity: 1; }
+      }
+
+      @keyframes blink-urgent {
+        0% { opacity: 1; }
+        50% { opacity: 0.4; }
+        100% { opacity: 1; }
+      }
+
+      /* Optional: Add scanline texture to background if you want */
+      window#waybar {
+        background: 
+          repeating-linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0.15) 0px,
+            transparent 1px,
+            transparent 2px
+          ),
+          rgba(0, 0, 0, 0.85);
+      }
     '';
   };
 }
