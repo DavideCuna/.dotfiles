@@ -227,9 +227,9 @@ in
         output = [ "eDP-1" "HDMI-A-1" ];
 
         # Layout: System info left, workspaces center, status right
-        modules-left   = [ "custom/logo" "cpu" "memory" "custom/battery" ];
+        modules-left   = [ "custom/logo" "cpu" "memory" "network" ];
         modules-center = [ "hyprland/workspaces" ];
-        modules-right  = [ "network" "custom/volume" "custom/mic" "backlight" "clock" ];
+        modules-right  = [ "backlight" "custom/volume" "custom/mic" "custom/battery" "clock" ];
 
         "custom/logo" = {
           format = ">>雪花";
@@ -304,7 +304,7 @@ in
         };
 
         "custom/battery" = {
-          interval = 1;
+          interval = 30;
           return-type = "json";
           format = "{}";
           on-click-right = "${pkgs.bash}/bin/bash -c 'if command -v powerprofilesctl >/dev/null; then cur=$(powerprofilesctl get); case $cur in performance) nxt=balanced;; balanced) nxt=power-saver;; power-saver) nxt=performance;; *) nxt=balanced;; esac; powerprofilesctl set \"$nxt\"; notify-send \">>POWER\" \"Profile: $nxt\"; fi'";
@@ -381,7 +381,7 @@ in
         padding: 0 12px;
         background: @lain-bg;
         color: @lain-accentB;
-        font-weight: normal;
+        font-weight: bold;
         border-right: 1px solid @lain-border;
         letter-spacing: 1px;
       }
@@ -389,7 +389,7 @@ in
       /* System monitors */
       #cpu,
       #memory,
-      #custom-battery {
+      #network {
         padding: 0 10px;
         color: @lain-fg;
         background: transparent;
@@ -443,7 +443,7 @@ in
       }
 
       /* Right side modules */
-      #network,
+      #custom-battery,
       #custom-volume,
       #custom-mic,
       #backlight,
@@ -467,9 +467,10 @@ in
 
       /* Clock - special highlight */
       #clock {
-        color: @lain-accent;
+        color: @lain-accentB;
+	background: @lain-bg;
         font-weight: bold;
-        border-left: 1px solid @lain-accent;
+        border-left: 1px solid @lain-border;
         letter-spacing: 0.5px;
       }
 
@@ -497,17 +498,6 @@ in
         100% { opacity: 1; }
       }
 
-      /* Optional: Add scanline texture to background if you want */
-      window#waybar {
-        background: 
-          repeating-linear-gradient(
-            0deg,
-            rgba(0, 0, 0, 0.15) 0px,
-            transparent 1px,
-            transparent 2px
-          ),
-          rgba(0, 0, 0, 0.85);
-      }
     '';
   };
 }

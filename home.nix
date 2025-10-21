@@ -60,6 +60,17 @@
     # '';
   };
 
+   home.pointerCursor = {
+      enable = true;
+      gtk.enable = true;
+      x11.enable = true;
+
+      package = pkgs.nordzy-cursor-theme;
+      name = "Nordzy-cursors";
+      size = 32;
+      hyprcursor.enable = true;
+   };
+
   # Home Manager can also manage your environment variables through
   # 'home.sessionVariables'. These will be explicitly sourced when using a
   # shell provided by Home Manager. If you don't want to manage your shell

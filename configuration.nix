@@ -66,7 +66,6 @@
       };
     };
     power-profiles-daemon.enable = true;
-    
   };
 
   # Fingerprint reader
@@ -184,7 +183,6 @@
     greetd.tuigreet
     rofi-wayland
     wl-clipboard-rs
-    phinger-cursors
     calcure
     brightnessctl
     jetbrains.idea-community
@@ -192,9 +190,11 @@
     android-studio
     flutter
     texliveFull
-    zathura
+    sioyek
     texlab
     vimPlugins.nvim-cmp
+    xdg-desktop-portal-hyprland
+    pipewire
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
