@@ -3,11 +3,18 @@
 {
 
   imports = [
-    ./sh.nix
-    ./hyprland.nix
-    ./waybar.nix
-    ./rofi.nix
-    ./scripts.nix
+       ./sh.nix
+       ./hyprland.nix
+       ./waybar.nix
+       ./rofi.nix
+       ./scripts.nix
+   # Include user packages
+      ./modules/home/dev-tools.nix
+      ./modules/home/ide.nix
+      ./modules/home/misc.nix
+      ./modules/home/latex.nix
+      ./modules/home/security.nix
+      ./modules/home/neovim.nix
   ];
 
   # Home Manager needs a bit of information about you and the paths it should
@@ -65,8 +72,8 @@
       gtk.enable = true;
       x11.enable = true;
 
-      package = pkgs.nordzy-cursor-theme;
-      name = "Nordzy-cursors";
+      package = pkgs.rose-pine-hyprcursor;
+      name = "Rose-pine-hyprcursor";
       size = 32;
       hyprcursor.enable = true;
    };

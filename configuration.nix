@@ -7,7 +7,10 @@
 {
   imports =
     [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
+         ./hardware-configuration.nix
+      # Include system packages
+         ./modules/system/hyprland.nix
+         ./modules/system/base-utils.nix
     ];
 
   # Bootloader.
@@ -114,15 +117,15 @@
   users.users.davide = {
     isNormalUser = true;
     description = "Davide";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "dialout" "uucp" "tty" ];
     packages = with pkgs; [
-      kdePackages.kate
     #  thunderbird
     ];
   };
 
   # Install firefox.
   programs.firefox.enable = true;
+
   # programs.waybar.enable = true;
   programs.hyprland = {
     enable = true;
@@ -139,62 +142,64 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    neovim
-    fd
-    ripgrep
-    gnumake
-    libreoffice-qt6
-    git
-    tmux
-    fprintd
-    htop
-    neofetch
-    curl
-    kitty
-    discord
-    lua
-    lua-language-server
-    tree-sitter
-    ripgrep
-    fd
-    nodejs
-    vimPlugins.markdown-preview-nvim
-    markdownlint-cli
-    jdk24
-    gcc
-    clang-tools
-    pyright
-    zip
-    unzip
-    fzf
-    lua5_1
-    lua51Packages.luarocks
-    stylua
-    wget
-    zsh
-    oh-my-zsh
-    bitwarden-cli
-    bitwarden-desktop
-    hyprland
-    hyprpaper
-    hyprlock
-    hyprcursor
-    hyprshot
-    greetd.tuigreet
-    rofi-wayland
-    wl-clipboard-rs
-    calcure
-    brightnessctl
-    jetbrains.idea-community
-    krabby
-    android-studio
-    flutter
-    texliveFull
-    sioyek
-    texlab
-    vimPlugins.nvim-cmp
-    xdg-desktop-portal-hyprland
-    pipewire
+    # neovim
+    # fd
+    # ripgrep
+    # gnumake
+    # libreoffice-qt6
+    # git
+    # tmux
+    # fprintd
+    # htop
+    # neofetch
+    # curl
+    # kitty
+    # discord
+    # lua
+    # lua-language-server
+    # tree-sitter
+    # ripgrep
+    # fd
+    # nodejs
+    # vimPlugins.markdown-preview-nvim
+    # markdownlint-cli
+    # jdk24
+    # gcc
+    # clang-tools
+    # pyright
+    # zip
+    # unzip
+    # fzf
+    # lua5_1
+    # lua51Packages.luarocks
+    # stylua
+    # wget
+    # zsh
+    # oh-my-zsh
+    # bitwarden-cli
+    # bitwarden-desktop
+    # hyprland
+    # hyprpaper
+    # hyprlock
+    # hyprcursor
+    # rose-pine-cursor
+    # hyprshot
+    # greetd.tuigreet
+    # rofi-wayland
+    # wl-clipboard-rs
+    # calcure
+    # brightnessctl
+    # jetbrains.idea-community
+    # krabby
+    # android-studio
+    # flutter
+    # texliveFull
+    # sioyek
+    # texlab
+    # vimPlugins.nvim-cmp
+    # xdg-desktop-portal-hyprland
+    # pipewire
+    # postgresql
   ];
 
   # Some programs need SUID wrappers, can be configured further or are

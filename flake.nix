@@ -1,11 +1,10 @@
 {
-
   description = "Flake DC";
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-25.05";
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hyprland = {
@@ -14,7 +13,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, hyprland, ...}:
+  outputs = { self, nixpkgs, home-manager, hyprland, ... }:
   let
     system = "x86_64-linux";
     lib = nixpkgs.lib;
@@ -26,24 +25,24 @@
         modules = [
           ./configuration.nix
 
-	# Home Manager
-	  home-manager.nixosModules.home-manager
-	           {
-	             home-manager.useGlobalPkgs = true;
-	             home-manager.useUserPackages = true;
-	             home-manager.users.davide = import ./home.nix;
-	           }
+          # Integrazione di Home Manager in NixOS
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.davide = import ./home.nix;
+          }
         ];
       };
     };
+
+    # (opzionale) configurazione standalone di Home Manager
     homeConfigurations = {
       davide = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
-        modules = [ 
-          ./home.nix
-        ];
+        modules = [ ./home.nix ];
         username = "davide";
-        homeDirectory = "/home/davide/";
+        homeDirectory = "/home/davide";
       };
     };
   };
