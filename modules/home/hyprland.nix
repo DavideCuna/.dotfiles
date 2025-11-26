@@ -1,6 +1,9 @@
 { config, pkgs, ... }:
+let
+   palette = import ../../theme/palette.nix;
+   c = palette.colors;
 
-{
+in {
   wayland.windowManager.hyprland = {
     enable = true;
     xwayland.enable = true;
@@ -26,7 +29,7 @@
       ];
 
       # Programs
-      "$terminal" = "kitty";
+      "$terminal" = "ghostty";
       "$fileManager" = "yazi";
       "$menu" = "rofi -show drun";
       "$mainMod" = "SUPER";

@@ -3,17 +3,22 @@
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-25.05";
+       home-manager = {
+         url = "github:nix-community/home-manager/release-25.05";
+         inputs.nixpkgs.follows = "nixpkgs";
+       };
     
-    home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    
-    hyprland = {
-      url = "github:hyprwm/Hyprland";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+       hyprland = {
+         url = "github:hyprwm/Hyprland";
+         inputs.nixpkgs.follows = "nixpkgs";
+       };
+
+       quickshell = {
+          url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
+          input.nixpkgs.follows = "nixpkgs";
+      };
   };
+
 
   outputs = { self, nixpkgs, home-manager, hyprland, ... }: 
     let

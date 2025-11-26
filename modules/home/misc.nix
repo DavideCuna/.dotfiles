@@ -2,7 +2,8 @@
 {
    home.packages = with pkgs; [
       calcure
-      nautilus
+      xfce.thunar
+      xfce.thunar-volman
       discord
       krabby
       libreoffice-qt6

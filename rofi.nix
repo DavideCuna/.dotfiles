@@ -6,7 +6,7 @@
 
   programs.rofi = {
     # enable = true;
-    terminal = "${pkgs.kitty}/bin/kitty";
+    terminal = "${pkgs.ghostty}/bin/ghostty";
     font = "IosefkaTerm Nerd Font 13";
     extraConfig = {
       modi = "drun,run";

@@ -1,7 +1,7 @@
 { pkgs, ... }:
 {
    home.packages = with pkgs; [
-      kitty
+      ghostty
       zsh
       oh-my-zsh
       git
