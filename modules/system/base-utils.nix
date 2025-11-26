@@ -9,5 +9,10 @@
       clang-tools
       arduino-cli
       postgresql
+      zotero
+      evince
+      dia
+      umlet
+      thunderbird
    ];
 }

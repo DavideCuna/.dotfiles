@@ -1,19 +1,16 @@
 { config, pkgs, ... }:
 {
+   home.packages = with pkgs; [
+      bitwarden-menu
+   ];
+
   programs.rofi = {
     # enable = true;
     terminal = "${pkgs.kitty}/bin/kitty";
+    font = "IosefkaTerm Nerd Font 13";
     extraConfig = {
       modi = "drun,run";
       show-icons = true;
     };
-    theme = "gruvbox-dark";
-  };
-
-  wayland.windowManager.hyprland.settings = {
-    bind = [
-      "SUPER, R, exec, rofi -show drun"
-      "SUPER, F, exec, rofi -show window"
-    ];
   };
 }

@@ -9,7 +9,6 @@
       stylua
       nodejs
       vimPlugins.nvim-cmp
-      vimPlugins.markdown-preview-nvim
       markdownlint-cli
       pyright
    ];

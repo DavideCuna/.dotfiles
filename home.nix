@@ -4,7 +4,6 @@
 
   imports = [
        ./sh.nix
-       ./hyprland.nix
        ./waybar.nix
        ./rofi.nix
        ./scripts.nix
@@ -15,6 +14,7 @@
       ./modules/home/latex.nix
       ./modules/home/security.nix
       ./modules/home/neovim.nix
+      ./modules/home/hyprland.nix
   ];
 
   # Home Manager needs a bit of information about you and the paths it should

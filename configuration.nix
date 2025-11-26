@@ -15,8 +15,14 @@
 
   # Bootloader.
   boot.loader = {
-    systemd-boot.enable = true;
-    efi.canTouchEfiVariables = true;
+    # systemd-boot.enable = true;
+    grub = {
+      enable = true;
+      device = "nodev";
+      efiSupport = true;
+      useOSProber = true;
+    };
+    efi.canTouchEfiVariables = false;
   };
 
   # zsh main shell
@@ -68,8 +74,11 @@
         user = "greeter";
       };
     };
+    blueman.enable = true;
     power-profiles-daemon.enable = true;
   };
+
+   hardware.bluetooth.enable = true;
 
   # Fingerprint reader
   services.fprintd.enable = true;
@@ -220,6 +229,12 @@
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
+  
+  fileSystems."/boot" =
+    { device = "/dev/disk/by-uuid/C51D-6A24";
+      fsType = "vfat";
+      options = [ "fmask=0077" "dmask=0077" ];
+    };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
