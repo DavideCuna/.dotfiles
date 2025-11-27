@@ -5,6 +5,7 @@
   imports = [
        ./sh.nix
        ./waybar.nix
+       ./hyprlock.nix
        ./rofi.nix
        ./scripts.nix
    # Include user packages

@@ -12,11 +12,6 @@
          url = "github:hyprwm/Hyprland";
          inputs.nixpkgs.follows = "nixpkgs";
        };
-
-       quickshell = {
-          url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
-          input.nixpkgs.follows = "nixpkgs";
-      };
   };
 
 

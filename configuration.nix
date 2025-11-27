@@ -88,6 +88,7 @@
     sudo.fprintAuth = true;
     login.fprintAuth = true;
     sddm.fprintAuth = true;
+    hyprlock.fprintAuth = false;
   };
 
   # Configure keymap in X11

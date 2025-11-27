@@ -3,7 +3,7 @@
    environment.systemPackages = with pkgs; [
       hyprland
       hyprpaper
-      hyprlock
+      # hyprlock
       hyprcursor
       rose-pine-cursor
       hyprshot
