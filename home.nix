@@ -79,6 +79,27 @@
       hyprcursor.enable = true;
    };
 
+   gtk = {
+      enable = true;
+
+      iconTheme = {
+         name = "Nordzy-dark";
+         package = pkgs.nordzy-icon-theme;
+      };
+
+      gtk3.extraConfig = {
+         Settings = ''
+            gtk-application-prefer-dark-theme = 1
+         '';
+      };
+
+      gtk4.extraConfig = {
+         Settings = ''
+            gtk-application-prefer-dark-theme = 1
+         '';
+      };
+   };
+
   # Home Manager can also manage your environment variables through
   # 'home.sessionVariables'. These will be explicitly sourced when using a
   # shell provided by Home Manager. If you don't want to manage your shell

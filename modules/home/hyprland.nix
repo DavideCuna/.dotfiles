@@ -30,7 +30,7 @@ in {
 
       # Programs
       "$terminal" = "ghostty";
-      "$fileManager" = "yazi";
+      "$fileManager" = "thunar";
       "$menu" = "rofi -show drun";
       "$mainMod" = "SUPER";
 
@@ -156,7 +156,7 @@ in {
         "$mainMod,F,fullscreen"
         "$mainMod,E,exec,$terminal -e $fileManager"
         "$mainMod,V,togglefloating,"
-        "$mainMod,R,exec,$menu"
+        "$mainMod,D,exec,$menu"
         "$mainMod,P,pseudo,"
         
         # Move focus

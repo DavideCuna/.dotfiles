@@ -14,19 +14,26 @@ in
         grace = 0;
         no_fade_in = false;
         no_fade_out = false;
+        fail_timeout = 750;
+      };
+
+      auth = {
+            "fingerprint:enabled" = true;
+            "fingerprint:ready_message" = ">>READY_TO_SCAN";
+            "fingerprint:present_message" = ">>>SCANNING";
       };
 
       background = [
         {
           monitor = "";
           path = "../Pictures/wallpapers/lain9.jpeg";
-          blur_passes = 3;
-          blur_size = 7;
-          noise = 0.0117;
+          blur_passes = 2;
+          blur_size = 4;
+          noise = 0.0175;
           contrast = 0.8916;
           brightness = 0.7;
-          vibrancy = 0.1696;
-          vibrancy_darkness = 0.0;
+          vibrancy = 0.1730;
+          vibrancy_darkness = 0.3;
         }
       ];
 
@@ -61,7 +68,7 @@ in
           monitor = "";
           text = "cmd[update:1000] date '+>>%Y.%m.%d'";
           color = "rgba(${c.fg}FF)";
-          font_size = 13;
+          font_size = 15;
           font_family = "IosevkaTerm Nerd Font";
           position = "-20, -20";
           halign = "right";
@@ -71,7 +78,7 @@ in
           monitor = "";
           text = "cmd[update:1000] date '+[%H:%M:%S]'";
           color = "rgba(${c.cyanBright}FF)";
-          font_size = 16;
+          font_size = 21;
           font_family = "IosevkaTerm Nerd Font Bold";
           position = "-20, -45";
           halign = "right";
@@ -80,9 +87,9 @@ in
         # Welcome message (center-top)
         {
           monitor = "";
-          text = ">>雪花_AUTHENTICATION_REQUIRED";
+          text = ">>雪花 AUTHENTICATION_REQUIRED";
           color = "rgba(${c.cyanBright}FF)";
-          font_size = 20;
+          font_size = 25;
           font_family = "IosevkaTerm Nerd Font Bold";
           position = "0, 80";
           halign = "center";
@@ -110,19 +117,6 @@ in
           halign = "center";
           valign = "center";
         }
-        # Caps lock indicator
-        {
-          monitor = "";
-          text = ">>CAPS_LOCK_ACTIVE";
-          color = "rgba(${c.warn}FF)";
-          font_size = 12;
-          font_family = "IosevkaTerm Nerd Font Bold";
-          position = "0, -170";
-          halign = "center";
-          valign = "center";
-          shadow_passes = 2;
-          shadow_size = 3;
-        }
         # Battery status (bottom-left)
         {
           monitor = "";
@@ -145,24 +139,13 @@ in
           halign = "right";
           valign = "bottom";
         }
-        # Terminal-style footer
-        {
-          monitor = "";
-          text = ">>PRESENT_DAY_|_PRESENT_TIME";
-          color = "rgba(${c.fgAlt}AA)";
-          font_size = 11;
-          font_family = "IosevkaTerm Nerd Font";
-          position = "0, 20";
-          halign = "center";
-          valign = "bottom";
-        }
       ];
 
       # Password input field
       input-field = [
         {
           monitor = "";
-          size = "300, 50";
+          size = "350, 60";
           outline_thickness = 2;
           dots_size = 0.25;
           dots_spacing = 0.4;
@@ -173,12 +156,12 @@ in
           font_color = "rgba(${c.fg}FF)";
           fade_on_empty = false;
           fade_timeout = 1000;
-          placeholder_text = "<span foreground='##${c.fgAlt}'>[ >>ENTER_PASSWORD ]</span>";
+          placeholder_text = "<span foreground='#${c.fgAlt}'>[ >>ENTER_PASSWORD ]</span>";
           hide_input = false;
           rounding = 3;
           check_color = "rgba(${c.cyan}FF)";
           fail_color = "rgba(${c.error}FF)";
-          fail_text = "<span foreground='##${c.error}'>>>ACCESS_DENIED</span>";
+          fail_text = "<span foreground='#${c.error}'>>>ACCESS_DENIED</span>";
           fail_transition = 300;
           capslock_color = "rgba(${c.warn}FF)";
           numlock_color = -1;
